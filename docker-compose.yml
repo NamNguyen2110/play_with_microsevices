@@ -1,0 +1,59 @@
+version: '3'
+services:
+  eruka:
+    container_name: discovery_service
+    build:
+      context: ./discovery/
+      dockerfile: Dockerfile
+    image: namnguyen2110/discovery:latest
+    ports:
+      - 8761:8761
+    hostname: serviceregistry
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://serviceregistry:8761/eureka
+    volumes:
+      - hello-docker:/home/app1/src
+    restart: always
+    networks:
+      - learning-docker
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8761" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  zuul:
+    container_name: gateway_service
+    build:
+      context: ./gateway/
+      dockerfile: Dockerfile
+    image: namnguyen2110/gateway:latest
+    ports:
+      - 8762:8762
+    hostname: gateway
+    environment:
+        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://serviceregistry:8761/eureka
+    volumes:
+      - hello-docker:/home/app2/src
+    restart: always
+    networks:
+      - learning-docker
+    depends_on:
+      - eruka
+  portainer:
+    container_name: portainer
+    image: portainer/portainer-ce:2.0.0
+    command: -H unix:///var/run/docker.sock
+    ports:
+      - 9000:9000
+      - 8000:8000
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - hello-docker:/data
+    networks:
+      - learning-docker
+networks:
+  learning-docker:
+    driver: bridge
+volumes:
+  hello-docker:

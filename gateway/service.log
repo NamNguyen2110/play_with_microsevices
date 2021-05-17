@@ -1,0 +1,3 @@
+Unable to find image 'namnguyen2110/discovery:latest' locally
+docker: Error response from daemon: manifest for namnguyen2110/discovery:latest not found: manifest unknown: manifest unknown.
+See 'docker run --help'.
