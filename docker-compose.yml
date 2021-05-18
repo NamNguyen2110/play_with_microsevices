@@ -31,7 +31,7 @@ services:
       - 8762:8762
     hostname: gateway
     environment:
-        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://serviceregistry:8761/eureka
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://serviceregistry:8761/eureka
     volumes:
       - hello-docker:/home/app2/src
     restart: always
@@ -50,6 +50,38 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - hello-docker:/data
+    networks:
+      - learning-docker
+  mariadb:
+    container_name: mariadb
+    image: mariadb
+    volumes:
+      - hello-docker:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: keycloak
+      MYSQL_USER: keycloak
+      MYSQL_PASSWORD: password
+    ports:
+      - 3308:3306
+    networks:
+      - learning-docker
+  keycloak:
+    container_name: keycloak_service
+    image: quay.io/keycloak/keycloak:latest
+    environment:
+      DB_VENDOR: mariadb
+      DB_ADDR: mariadb
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_PASSWORD: password
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: Pa55w0rd
+      JGROUPS_DISCOVERY_PROTOCOL: JDBC_PING
+    ports:
+      - 8080:8080
+    depends_on:
+      - mariadb
     networks:
       - learning-docker
 networks:
