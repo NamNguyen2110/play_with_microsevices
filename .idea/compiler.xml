@@ -9,15 +9,18 @@
         <outputRelativeToContentRoot value="true" />
         <module name="gateway" />
         <module name="discovery" />
+        <module name="authentication" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="authentication" target="11" />
       <module name="discovery" target="11" />
       <module name="gateway" target="11" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="authentication" options="-parameters" />
       <module name="discovery" options="-parameters" />
       <module name="gateway" options="-parameters" />
     </option>

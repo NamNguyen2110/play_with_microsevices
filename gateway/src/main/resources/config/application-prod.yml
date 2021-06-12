@@ -11,3 +11,10 @@ server:
 spring:
   application:
     name: zuul-server
+zuul:
+  routes:
+    authentication:
+      path: /api/v1/gateway/authentication/**
+      url: http://localhost:8081
+
+
