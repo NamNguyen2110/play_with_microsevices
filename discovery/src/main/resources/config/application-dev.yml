@@ -1,6 +1,3 @@
-spring:
-  profiles:
-    active: dev
 server:
   port: 8761
 eureka:
@@ -15,8 +12,3 @@ logging:
       netflix:
         discovery: 'OFF'
         eureka: 'OFF'
-keycloak:
-  auth-server-url: http://localhost:8080/auth
-  realm: demo
-  resource: demo-app
-  principal-attribute: preferred_username

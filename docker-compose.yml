@@ -1,6 +1,6 @@
 version: '3'
 services:
-  eruka:
+  eruka-server:
     container_name: discovery_service
     build:
       context: ./discovery/
@@ -12,16 +12,16 @@ services:
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://serviceregistry:8761/eureka
     volumes:
-      - hello-docker:/home/app1/src
+      - play-volumes:/home/app1/src
     restart: always
     networks:
-      - learning-docker
+      - play-networks
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8761" ]
       interval: 30s
       timeout: 10s
       retries: 5
-  zuul:
+  zuul-server:
     container_name: gateway_service
     build:
       context: ./gateway/
@@ -33,12 +33,12 @@ services:
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://serviceregistry:8761/eureka
     volumes:
-      - hello-docker:/home/app2/src
+      - play-volumes:/home/app2/src
     restart: always
     networks:
-      - learning-docker
+      - play-networks
     depends_on:
-      - eruka
+      - eruka-server
   portainer:
     container_name: portainer
     image: portainer/portainer-ce:2.0.0
@@ -49,50 +49,32 @@ services:
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - hello-docker:/data
+      - play-volumes:/data
     networks:
-      - learning-docker
+      - play-networks
   mariadb:
     container_name: mariadb
     image: mariadb
     volumes:
-      - hello-docker:/var/lib/mysql
+      - play-volumes:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: keycloak
-      MYSQL_USER: keycloak
+      MYSQL_DATABASE: admin
+      MYSQL_USER: admin
       MYSQL_PASSWORD: password
     ports:
       - 3308:3306
     networks:
-      - learning-docker
+      - play-networks
   redis_service:
     container_name: redis_service
     image: redis:6.2.3
     ports:
       - 6379:6379
     networks:
-      - learning-docker
-  keycloak:
-    container_name: keycloak_service
-    image: quay.io/keycloak/keycloak:latest
-    environment:
-      DB_VENDOR: mariadb
-      DB_ADDR: mariadb
-      DB_DATABASE: keycloak
-      DB_USER: keycloak
-      DB_PASSWORD: password
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: Pa55w0rd
-      JGROUPS_DISCOVERY_PROTOCOL: JDBC_PING
-    ports:
-      - 8080:8080
-    depends_on:
-      - mariadb
-    networks:
-      - learning-docker
+      - play-networks
 networks:
-  learning-docker:
+  play-networks:
     driver: bridge
 volumes:
-  hello-docker:
+  play-volumes:

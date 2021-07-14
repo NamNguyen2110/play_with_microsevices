@@ -11,8 +11,6 @@ server:
 spring:
   application:
     name: zuul-server
-  profiles:
-    active: dev
 zuul:
   routes:
     authentication:
